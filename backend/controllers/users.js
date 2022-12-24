@@ -16,23 +16,19 @@ const getUsers = (req, res) => {
     })
 }
 
-userSchema.statics.getUser = function getUser (email, password) {
-  return this.findOne({ email })
-    .then((user) => {
-      if (!user) {
-        return Promise.reject(new Error('Incorrect email or password'));
-      }
-
-      return bcrypt.compare(password, user.password)
-        .then((matched) => {
-          if (!matched) {
-            return Promise.reject(new Error('Incorrect email or password'));
-          }
-
-          return user;
-        });
-    });
-};
+const login = (req, res) => {
+  const { email, password } = req.body
+  return User.getUser(email, password)
+  .then((user) => {
+    // authentication successful! user is in the user variable
+})
+.catch((err) => {
+    // authentication error
+res
+.status(401)
+.send({ message: err.message });
+});
+}
 
 const createUser = (req, res) => {
   const { email, password, name, about, avatar } = req.body
@@ -101,8 +97,6 @@ const patchUserAvatar = (req, res) => {
       }
     })
 }
-
-
 
 module.exports = {
   getUser,

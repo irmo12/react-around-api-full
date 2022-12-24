@@ -22,13 +22,13 @@ const userSchema = new mongoose.Schema({
     type: String,
     minlength: 2,
     maxlength: 30,
-    default: 'Jacques Cousteau'
+    default: 'Jacques Cousteau',
   },
   about: {
     type: String,
     minlength: 2,
     maxlength: 30,
-    default: 'Explorer'
+    default: 'Explorer',
   },
   avatar: {
     type: String,
@@ -41,5 +41,21 @@ const userSchema = new mongoose.Schema({
     },
   },
 })
+
+userSchema.statics.getUser = function getUser(email, password) {
+  return this.findOne({ email }).then((user) => {
+    if (!user) {
+      return Promise.reject(new Error('Incorrect email or password'))
+    }
+
+    return bcrypt.compare(password, user.password).then((matched) => {
+      if (!matched) {
+        return Promise.reject(new Error('Incorrect email or password'))
+      }
+
+      return user
+    })
+  })
+}
 
 module.exports = mongoose.model('User', userSchema)
