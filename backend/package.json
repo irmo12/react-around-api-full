@@ -1,0 +1,40 @@
+{
+  "name": "around-express",
+  "version": "1.0.0",
+  "description": "back end basics (p12)",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "npx eslint .",
+    "dev": "nodemon app.js",
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/irmo12/around-express.git"
+  },
+  "author": "Omri Ben Tal",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/irmo12/around-express/issues"
+  },
+  "homepage": "https://github.com/irmo12/around-express#readme",
+  "devDependencies": {
+    "eslint": "^8.26.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "nodemon": "^2.0.20",
+    "prettier": "^2.7.1"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.1",
+    "celebrate": "^15.0.1",
+    "cors": "^2.8.5",
+    "express": "^4.18.1",
+    "express-rate-limit": "^6.6.0",
+    "helmet": "^6.0.0",
+    "mongod": "^2.0.0",
+    "mongoose": "^6.6.7",
+    "validator": "^13.7.0"
+  }
+}
