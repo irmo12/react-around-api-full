@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const rateLimit = require('express-rate-limit');
 const { urlencoded } = require('express');
+const { errors } = require('celebrate')
+
 const { NOT_FOUND } = require('./utils/utils');
 const router = require('./routes');
 

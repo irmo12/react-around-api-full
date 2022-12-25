@@ -1,0 +1,23 @@
+.img-popout {
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.img-popout__img {
+  max-width: 75vw;
+  max-height: 75vh;
+  transition: opacity 0.3s;
+}
+
+.img-popout__caption {
+  max-width: 50vw;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 1.25;
+  color: #ffffff;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  margin-top: 10px;
+}

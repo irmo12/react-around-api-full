@@ -9,9 +9,18 @@ const {
   patchUserAvatar,
 } = require('../controllers/users');
 
-router.get('/', getUsers);
-router.get('/:id', getUser);
-router.post('/', createUser);
+// router.get('/', getUsers);
+
+router.get('/', auth, getUser);
+router.post('/signup', celebrate({
+  headers: Joi.object().keys({
+    'Content-Type': Joi.string().valid('application/json'),
+  }),
+  body: Joi.object().keys({
+    email: Joi.string().email(),
+    password: Joi.string()
+  }),
+}), createUser);
 router.patch('/me', patchUser);
 router.patch('/me/avatar', patchUserAvatar);
 

@@ -1,0 +1,235 @@
+.popup {
+  background-color: rgba(0, 0, 0, 0.5);
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  left: 0;
+  top: 0;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  opacity: 0;
+  display: flex;
+  flex-flow: column nowrap;
+  visibility: hidden;
+  transition: opacity 0.4s ease-in, visibility 0ms ease-in 0.4s;
+  z-index: 2;
+  cursor: pointer;
+}
+
+.popup_active {
+  visibility: visible;
+  opacity: 1;
+  transition-delay: 0s;
+}
+
+.popup__container {
+  max-width: 430px;
+  min-width: 430px;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  justify-content: space-around;
+  border: none;
+  padding: 0 36px;
+  background-color: #fff;
+  box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+  box-sizing: border-box;
+  z-index: 5;
+  cursor: default;
+}
+
+.popup__container-img {
+  max-width: 75vw;
+  display: flex;
+  flex-flow: column nowrap;
+  z-index: 5;
+  cursor: default;
+}
+
+.popup__img-popout {
+  max-width: 75vw;
+}
+
+.popup__container-delete {
+  width: 100%;
+  justify-content: space-evenly;
+}
+
+.popup__container-close {
+  background-image: url(../images/plus.svg);
+  transform: rotate(-45deg);
+  background-position: center;
+  background-color: transparent;
+  background-repeat: no-repeat;
+  background-size: contain;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  margin-left: 470px;
+  transition: opacity 0.3s;
+  cursor: pointer;
+  z-index: 5;
+}
+
+.popup__container-close-img {
+  margin: 0;
+  align-self: flex-end;
+}
+
+.popup__container-close:hover {
+  opacity: 0.6;
+}
+
+.popup__form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.popup__form-heading {
+  font-style: normal;
+  font-weight: 900;
+  font-size: 24px;
+  line-height: 1.2;
+  color: #000000;
+  text-align: left;
+  width: 100%;
+  margin: 34px 0 0;
+}
+
+.popup__form-inputs {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 13px;
+  padding: 0;
+  margin-top: 44px;
+  border: 0;
+  width: 100%;
+}
+
+.popup__form-info-couple {
+  margin-bottom: 10px;
+}
+
+.popup__form-field {
+  border: none;
+  background-image: none;
+  background-color: transparent;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 1.2;
+  color: #000;
+  padding: 9px 0;
+  margin: 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  min-width: 100%;
+  width: 100%;
+}
+
+.popup__form-field::placeholder {
+  color: rgba(0, 0, 0, 0.2);
+}
+
+.popup__form-field_error {
+  border-bottom: 1px solid #ff0000;
+}
+
+.popup__form-submit {
+  background-color: #000;
+  color: #fff;
+  width: 100%;
+  border: 0;
+  border-radius: 2px;
+  box-shadow: none;
+  padding: 15px 125px 15px;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 1.22;
+  text-align: center;
+  transition: opacity 0.4s;
+  cursor: pointer;
+  margin: 18px 0 36.5px;
+}
+
+.popup__form-submit:hover:not(:disabled) {
+  opacity: 0.8;
+}
+
+.popup__form-submit:disabled {
+  background-color: #e5e5e5;
+  color: #000;
+  border: 1px solid #000;
+  opacity: 0.2;
+  cursor: default;
+}
+
+.popup__form-error-msg {
+  color: #ff0000;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 1.25;
+}
+
+.popup__form-error-msg_inactive {
+  visibility: hidden;;
+}
+
+.popup__tooltip-heading {
+  font-weight: 900;
+  font-size: 24px;
+  line-height: 1.2;
+  color: #000;
+  font-style: normal;
+  text-align: center;
+  margin: 0 0 60px 0;
+}
+
+.popup__tooltip-img {
+  margin: 60px 0 35px 0;
+}
+
+@media screen and (max-width: 796px) {
+  .popup__form-heading {
+    font-size: 18px;
+    line-height: 1.22;
+    margin-top: 25px;
+  }
+
+  .popup__form-inputs {
+    margin-top: 76px;
+    margin-bottom: 0;
+  }
+
+  .popup__form-submit {
+    font-size: 14px;
+    line-height: 1.2;
+    margin-bottom: 22px;
+    max-width: 238px;
+    padding: 14px 100px;
+  }
+
+  .popup__form-field:last-of-type {
+    margin-bottom: 45px;
+  }
+
+  .popup__container {
+    max-width: 282px;
+    min-width: 260px;
+    padding: 0 22px;
+  }
+  .popup__container-close {
+    height: 26px;
+    width: 26px;
+    margin-bottom: 18.6px;
+    margin-left: 247px;
+  }
+}

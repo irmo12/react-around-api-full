@@ -1,0 +1,110 @@
+.card {
+  display: flex;
+  flex-flow: row wrap;
+  max-width: calc((880px - (2 * 17px)) / 3);
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fff;
+  border-radius: 10px;
+  position: relative;
+}
+
+.card__img {
+  width: 100%;
+  max-width: 282px;
+  min-height: 282px;
+  max-height: 282px;
+  background-color: #000;
+  align-self: flex-start;
+  display: block;
+  cursor: pointer;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.card__trash {
+  background-image: url(../images/Trash.svg);
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  position: absolute;
+  background-color: transparent;
+  border: 0;
+  box-shadow: none;
+  color: #fff;
+  width: 18px;
+  height: 19.3px;
+  top: 18px;
+  right: 15.8px;
+  transition: opacity 0.3s;
+  cursor: pointer;
+}
+
+.trash_display-none {
+  display: none;
+}
+
+.card__trash:hover {
+  opacity: 0.6;
+}
+
+.card__caption {
+  font-style: normal;
+  font-weight: 900;
+  font-size: 24px;
+  line-height: 1.2;
+  color: #000;
+  margin: 24.5px 0 24.5px 21px;
+  max-width: calc(282px - 21px - 3px - 21px - 18px);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.card__like-btn {
+  background: none;
+  background-image: url(../images/heart.svg);
+  border: 0;
+  box-shadow: none;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  width: 21px;
+  height: 19px;
+  position: relative;
+  top: 13px;
+  right: 17px;
+  transition: opacity 0.3s;
+  transition: background-image 0.4s;
+  cursor: pointer;
+}
+
+.card__like-btn:hover {
+  opacity: 0.5;
+}
+
+.card__like-btn_active {
+  background-image: url(../images/heartfull.svg);
+}
+
+.card__like-area {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.card__like-counter {
+  width: 9px;
+  height: 13px;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 16px;
+  text-align: center;
+  color: #000000;
+  position: relative;
+  right: 16.5px;
+  top: 3px;
+}
