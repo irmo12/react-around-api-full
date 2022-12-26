@@ -1,5 +1,7 @@
 const User = require('../models/user')
 const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
+
 const {
   OK,
   SERVER_INTERNAL,
@@ -8,9 +10,10 @@ const {
   NOT_FOUND,
 } = require('../utils/utils')
 
-const getUsers = (req, res) => {
-  User.find({})
-    .then((users) => res.send({ data: users }))
+const getUser = (req, res) => {
+  const {id} = req.body
+  User.findById({id})
+    .then((user) => res.send({ name: user.name, about: user.about, avatar: user.avatar }))
     .catch(() => {
       res.status(SERVER_INTERNAL).send({ message: 'Internal server error' })
     })
@@ -18,16 +21,16 @@ const getUsers = (req, res) => {
 
 const login = (req, res) => {
   const { email, password } = req.body
-  return User.getUser(email, password)
-  .then((user) => {
-    // authentication successful! user is in the user variable
-})
-.catch((err) => {
-    // authentication error
-res
-.status(401)
-.send({ message: err.message });
-});
+  return User.getUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, 'super-strong-secret', {
+        expiresIn: '7d',
+      })
+      res.send({ token })
+    })
+    .catch((err) => {
+      res.status(401).send({ message: err.message })
+    })
 }
 
 const createUser = (req, res) => {
@@ -100,8 +103,8 @@ const patchUserAvatar = (req, res) => {
 
 module.exports = {
   getUser,
-  getUsers,
   createUser,
   patchUser,
   patchUserAvatar,
+  login
 }
