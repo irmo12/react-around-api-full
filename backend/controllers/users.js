@@ -9,28 +9,33 @@ const {
   CREATED,
   NOT_FOUND,
 } = require('../utils/utils')
+const BadReq = require('../errors/bad-req-err')
+const Unauthorized = require('../errors/unauthorized-err')
+const NotFound = require('../errors/not-found-err')
+const NotFound = require('../errors/not-found-err')
 
 const getUser = (req, res) => {
-  const {id} = req.body
-  User.findById({id})
-    .then((user) => res.send({ name: user.name, about: user.about, avatar: user.avatar }))
-    .catch(() => {
-      res.status(SERVER_INTERNAL).send({ message: 'Internal server error' })
-    })
+  const { id } = req.body
+  User.findById({ id })
+    .then((user) =>
+      res.send({ name: user.name, about: user.about, avatar: user.avatar }),
+    )
+    .catch(next)
 }
 
 const login = (req, res) => {
   const { email, password } = req.body
   return User.getUserByCredentials(email, password)
     .then((user) => {
+      if (!user) {
+        throw new Unauthorized('Unauthorized')
+      }
       const token = jwt.sign({ _id: user._id }, 'super-strong-secret', {
         expiresIn: '7d',
       })
       res.send({ token })
     })
-    .catch((err) => {
-      res.status(401).send({ message: err.message })
-    })
+    .catch(next)
 }
 
 const createUser = (req, res) => {
@@ -40,18 +45,13 @@ const createUser = (req, res) => {
     .then((hash) => {
       User.create({ email, password: hash, name, about, avatar })
     })
-    .then((user) => res.status(CREATED).send({ data: user }))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(BAD_REQ).send({
-          message: `${Object.values(err.errors)
-            .map((error) => error.message)
-            .join(', ')}`,
-        })
-      } else {
-        res.status(SERVER_INTERNAL).send({ message: 'Internal server error' })
+    .then((user) => {
+      if (!user) {
+        throw new BadReq('Invalid user information')
       }
+      res.status(CREATED).send({ data: user })
     })
+    .catch(next)
 }
 
 const patchUser = (req, res) => {
@@ -64,17 +64,12 @@ const patchUser = (req, res) => {
     .then((user) => res.status(OK).send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(BAD_REQ).send({
-          message: `${Object.values(err.errors)
-            .map((error) => error.message)
-            .join(', ')}`,
-        })
+        throw new BadReq('Validation error, check data')
       } else if (err.name === 'DocumentNotFoundError') {
-        res.status(NOT_FOUND).send({ message: 'no such user' })
-      } else {
-        res.status(SERVER_INTERNAL).send({ message: "couldn't update profile" })
+        throw new NotFound('no such user')
       }
     })
+    .catch(next)
 }
 
 const patchUserAvatar = (req, res) => {
@@ -88,17 +83,12 @@ const patchUserAvatar = (req, res) => {
     .then((user) => res.status(OK).send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(BAD_REQ).send({
-          message: `${Object.values(err.errors)
-            .map((error) => error.message)
-            .join(', ')}`,
-        })
+        throw new BadReq('bad link')
       } else if (err.name === 'DocumentNotFoundError') {
-        res.status(NOT_FOUND).send('no such user')
-      } else {
-        res.status(SERVER_INTERNAL).send({ message: "couldn't update picture" })
+        throw new NotFound('no such user')
       }
     })
+    .catch(next)
 }
 
 module.exports = {
@@ -106,5 +96,5 @@ module.exports = {
   createUser,
   patchUser,
   patchUserAvatar,
-  login
+  login,
 }
