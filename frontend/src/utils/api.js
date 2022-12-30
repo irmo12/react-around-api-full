@@ -23,7 +23,7 @@ class Api {
   }
 
   patchUserInfo(data) {
-    return fetch(`${this._baseURL}users/me`, {
+    return fetch(`${this._baseURL}/users/me`, {
       headers: this._headers,
       method: "PATCH",
       body: JSON.stringify(data),
@@ -46,14 +46,14 @@ class Api {
   }
 
   changeLikeCardStatus(id, isLiked) {
-    return fetch(`${this._baseURL}cards/likes/${id}`, {
+    return fetch(`${this._baseURL}/cards/likes/${id}`, {
       headers: this._headers,
       method: isLiked ? "DELETE" : "PUT",
     }).then((res) => this._processResponse(res));
   }
 
   changeAvatar(avatar) {
-    return fetch(`${this._baseURL}users/me/avatar`, {
+    return fetch(`${this._baseURL}/users/me/avatar`, {
       headers: this._headers,
       method: "PATCH",
       body: JSON.stringify({ avatar }),
@@ -66,7 +66,7 @@ class Api {
 
 
   registerParams(data) {
-    return fetch(`${this._baseURL}signup`, {
+    return fetch(`${this._baseURL}/signup`, {
       headers: this._headers,
       method: "POST",
       body: JSON.stringify(data),
@@ -74,7 +74,7 @@ class Api {
   }
 
   authorizationParams(data) {
-    return fetch(`${this._baseURL}signin`, {
+    return fetch(`${this._baseURL}/signin`, {
       headers: this._headers,
       method: "POST",
       body: JSON.stringify(data),
@@ -82,7 +82,7 @@ class Api {
   }
 
   getUserAuth(token) {
-    return fetch(`${this._baseURL}users/me`, {
+    return fetch(`${this._baseURL}/users/me`, {
       headers: {...this._headers, "Authorization":`Bearer ${token}`},
       method: "GET"
     }).then((res) => this._processResponse(res));
@@ -91,7 +91,7 @@ class Api {
 }
 
 const api = new Api({
-  baseURL: "api.omribt.students.nomoredomainssbs.ru",
+  baseURL: "http://localhost:3000",
   headers: {
     authorization: `${TOKEN}`,
     "Content-Type": "application/json",
@@ -99,7 +99,7 @@ const api = new Api({
 });
 
 const regApi =  new Api({
-  baseURL: 'api.omribt.students.nomoredomainssbs.ru',
+  baseURL: 'http://localhost:3000',
   headers: {"Content-Type": "application/json"}
 })
 export { api, regApi };

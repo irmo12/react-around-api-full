@@ -2,16 +2,9 @@ const User = require('../models/user')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
-const {
-  OK,
-  SERVER_INTERNAL,
-  BAD_REQ,
-  CREATED,
-  NOT_FOUND,
-} = require('../utils/utils')
+const { OK, CREATED } = require('../utils/utils')
 const BadReq = require('../errors/bad-req-err')
 const Unauthorized = require('../errors/unauthorized-err')
-const NotFound = require('../errors/not-found-err')
 const NotFound = require('../errors/not-found-err')
 
 const getUser = (req, res) => {
@@ -27,7 +20,7 @@ const login = (req, res) => {
   const { email, password } = req.body
   return User.getUserByCredentials(email, password)
     .then((user) => {
-      if (!user) {
+      if (!res.length) {
         throw new Unauthorized('Unauthorized')
       }
       const token = jwt.sign({ _id: user._id }, 'super-strong-secret', {
@@ -39,6 +32,7 @@ const login = (req, res) => {
 }
 
 const createUser = (req, res) => {
+  console.log(req.body)
   const { email, password, name, about, avatar } = req.body
   bcrypt
     .hash(password, 10)

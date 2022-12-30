@@ -150,14 +150,14 @@ function App() {
     return () => document.removeEventListener('keydown', closeByEscape)
   }, [popupOpen])
 
-  useEffect(() => {
-    api
-      .getUserInfo()
-      .then((data) => {
-        setUser(data)
-      })
-      .catch((err) => console.log(err))
-  }, [])
+  // useEffect(() => {
+  //   api
+  //     .getUserInfo()
+  //     .then((data) => {
+  //       setUser(data)
+  //     })
+  //     .catch((err) => console.log(err))
+  // }, [])
 
   function handleUpdateUser(newUser) {
     setIsLoading(true)
