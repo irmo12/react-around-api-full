@@ -39,11 +39,15 @@ const createUser = (req, res) => {
     .then((hash) => {
       User.create({ email, password: hash, name, about, avatar })
     })
-    .then((user) => {
-      if (!user) {
-        throw new BadReq('Invalid user information')
+    .then((user) => res.status(CREATED).send({ data: user }))
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        throw new BadReq(
+          `${Object.values(err.errors)
+            .map((error) => error.message)
+            .join(', ')}`,
+        )
       }
-      res.status(CREATED).send({ data: user })
     })
     .catch(next)
 }

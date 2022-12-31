@@ -36,9 +36,11 @@ app.post('/signin', login)
 app.post(
   '/signup',
   celebrate({
-    headers: Joi.object().keys({
-      'Content-Type': Joi.string().valid('application/json'),
-    }),
+    headers: Joi.object()
+      .keys({
+        'Content-Type': Joi.string().valid('application/json'),
+      })
+      .options({ allowUnknown: true }),
     body: Joi.object().keys({
       email: Joi.string().email(),
       password: Joi.string(),
@@ -51,8 +53,9 @@ app.use('*', (req, res) => {
   res.status(404).send({ message: 'Requested resource not found' })
 })
 
-app.use(errors());
+app.use(errors())
 app.use((err, req, res, next) => {
+  console.log(err.message, err.statusCode)
   err.statusCode ||= 500
   res.status(err.statusCode).send({
     message:
