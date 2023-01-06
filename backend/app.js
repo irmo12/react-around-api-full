@@ -49,13 +49,12 @@ app.post(
   createUser,
 )
 
-app.use('*', (req, res) => {
-  res.status(404).send({ message: 'Requested resource not found' })
-})
+// app.use('*', (req, res) => {
+//   res.status(404).send({ message: 'Requested resource not found' })
+// })
 
 app.use(errors())
 app.use((err, req, res, next) => {
-  console.log(err.message, err.statusCode)
   err.statusCode ||= 500
   res.status(err.statusCode).send({
     message:

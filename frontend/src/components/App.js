@@ -63,7 +63,8 @@ function App() {
   function register(email, password) {
     auth
       .signup(email, password)
-      .then(() => {
+      .then((data) => {
+        console.log(data)
         setIsSuccess(true)
         setIsTooltipOpen(true)
       })
@@ -231,7 +232,8 @@ function App() {
       history.push('/signin')
     }
     setIsTooltipOpen(false)
-    setIsSuccess(false)
+    setTimeout(()=>setIsSuccess(false),400)
+    
   }
 
   return (

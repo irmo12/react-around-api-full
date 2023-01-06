@@ -10,6 +10,7 @@ const NotFound = require('../errors/not-found-err')
 const getUser = (req, res) => {
   const { id } = req.body
   User.findById({ id })
+    .orFail(new NotFound('no user by that id'))
     .then((user) =>
       res.send({ name: user.name, about: user.about, avatar: user.avatar }),
     )
@@ -31,22 +32,29 @@ const login = (req, res) => {
     .catch(next)
 }
 
-const createUser = (req, res) => {
-  console.log(req.body)
-  const { email, password, name, about, avatar } = req.body
+const createUser = (req, res, next) => {
+  let { email, password, name, about, avatar } = req.body
   bcrypt
     .hash(password, 10)
-    .then((hash) => {
-      User.create({ email, password: hash, name, about, avatar })
+    .catch(next)
+    .then((hash) => User.create({ email, password: hash, name, about, avatar }))
+    .then((user) => {
+      ;({ email, name, about, avatar } = user)
+      res.status(CREATED).send({ data: { email, name, about, avatar } })
     })
-    .then((user) => res.status(CREATED).send({ data: user }))
     .catch((err) => {
+      console.log(err.code)
       if (err.name === 'ValidationError') {
-        throw new BadReq(
-          `${Object.values(err.errors)
-            .map((error) => error.message)
-            .join(', ')}`,
+        return next(
+          new BadReq(
+            `${Object.values(err.errors)
+              .map((error) => error.message)
+              .join(', ')}`,
+          ),
         )
+      }
+      if (err.code === 11000) {
+        throw new BadReq('A user with that email is already registered')
       }
     })
     .catch(next)

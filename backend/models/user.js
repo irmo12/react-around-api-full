@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const validator = require('validator')
+const bcrypt = require('bcryptjs')
 const badReq = require('../errors/bad-req-err')
 
 const userSchema = new mongoose.Schema({
@@ -51,7 +52,7 @@ userSchema.statics.getUserByCredentials = function getUserByCredentials(
   return this.findOne({ email })
     .select('+password')
     .then((user) => {
-      if (!res.legth) {
+      if (!user) {
         throw new badReq('Incorrect email or password')
       }
 
