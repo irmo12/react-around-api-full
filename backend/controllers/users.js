@@ -12,7 +12,6 @@ const {
 const BadReq = require('../errors/bad-req-err')
 const Unauthorized = require('../errors/unauthorized-err')
 const NotFound = require('../errors/not-found-err')
-const NotFound = require('../errors/not-found-err')
 
 const getUser = (req, res) => {
   const { id } = req.body

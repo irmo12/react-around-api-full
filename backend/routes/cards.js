@@ -8,7 +8,7 @@ router.get('/', getCards);
 router.post('/', celebrate({
   headers:  Joi.object().keys({'authorization': Joi.string(),
   "Content-Type": Joi.string().valid("application/json")})
-}) createCard);
+}), createCard);
 router.put('/:id/likes', likeCard);
 router.delete('/:id/likes', unlikeCard);
 router.delete('/:id', deleteCard);

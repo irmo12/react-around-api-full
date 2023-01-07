@@ -10,7 +10,7 @@ const {
 } = require('../controllers/users')
 
 
-router.get('/', auth, getUserByCredentials)
+// router.get('/', auth, getUserByCredentials)
 router.get('/me', auth, getUser)
 router.patch('/me', auth, patchUser)
 router.patch('/me/avatar', auth, patchUserAvatar)

@@ -8,5 +8,5 @@ const validIncoming = {
     return helpers.error('string.uri');
   }
 
-  validateHead: ()
+  // validateHead: ()
 }

@@ -3,10 +3,9 @@ const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 const rateLimit = require('express-rate-limit')
 const { urlencoded } = require('express')
-const { errors } = require('celebrate')
+const { errors, celebrate, Joi } = require('celebrate')
 
 const { login, createUser } = require('./controllers/users')
-const { NOT_FOUND } = require('./utils/utils')
 const router = require('./routes')
 
 mongoose.connect('mongodb://localhost:27017/aroundb', {
