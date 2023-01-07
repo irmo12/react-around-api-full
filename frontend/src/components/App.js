@@ -232,7 +232,7 @@ function App() {
       history.push('/signin')
     }
     setIsTooltipOpen(false)
-    setTimeout(()=>setIsSuccess(false),400)
+    setTimeout(setIsSuccess,400,false)
     
   }
 

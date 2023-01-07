@@ -49,19 +49,17 @@ userSchema.statics.getUserByCredentials = function getUserByCredentials(
   email,
   password,
 ) {
-   this.findOne({ email })
+  return this.findOne({ email })
     .select('+password')
     .then((user) => {
       if (!user) {
         return Promise.reject(new badReq('Incorrect email or password'))
       }
-
-      return bcrypt.compare(password, user.password).then((matched) => {
+      bcrypt.compare(password, user.password).then((matched) => {
         if (!matched) {
           return Promise.reject(new badReq('Incorrect email or password'))
         }
-
-        return user
+        return Promise.resolve(user)
       })
     })
     .catch(next)

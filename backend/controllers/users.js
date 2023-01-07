@@ -22,6 +22,7 @@ const login = (req, res, next) => {
       if (!user) {
         return next(new Unauthorized('Unauthorized'))
       }
+      console.log(user)
       const token = jwt.sign({ _id: user._id }, 'super-strong-secret', {
         expiresIn: '7d',
       })
