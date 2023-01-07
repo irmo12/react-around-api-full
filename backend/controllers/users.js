@@ -7,22 +7,20 @@ const BadReq = require('../errors/bad-req-err')
 const Unauthorized = require('../errors/unauthorized-err')
 const NotFound = require('../errors/not-found-err')
 
-const getUser = (req, res) => {
+const getUser = (req, res, next) => {
   const { id } = req.body
   User.findById({ id })
     .orFail(new NotFound('no user by that id'))
-    .then((user) =>
-      res.send({ name: user.name, about: user.about, avatar: user.avatar }),
-    )
+    .then((user) => res.send(({ name, about, avatar } = user)))
     .catch(next)
 }
 
-const login = (req, res) => {
+const login = (req, res, next) => {
   const { email, password } = req.body
-  return User.getUserByCredentials(email, password)
+  User.getUserByCredentials(email, password)
     .then((user) => {
-      if (!res.length) {
-        throw new Unauthorized('Unauthorized')
+      if (!user) {
+        return next(new Unauthorized('Unauthorized'))
       }
       const token = jwt.sign({ _id: user._id }, 'super-strong-secret', {
         expiresIn: '7d',
@@ -43,7 +41,6 @@ const createUser = (req, res, next) => {
       res.status(CREATED).send({ data: { email, name, about, avatar } })
     })
     .catch((err) => {
-      console.log(err.code)
       if (err.name === 'ValidationError') {
         return next(
           new BadReq(
@@ -60,7 +57,7 @@ const createUser = (req, res, next) => {
     .catch(next)
 }
 
-const patchUser = (req, res) => {
+const patchUser = (req, res, next) => {
   User.findByIdAndUpdate(
     req.user._id,
     { name: req.body.name, about: req.body.about },
@@ -78,7 +75,7 @@ const patchUser = (req, res) => {
     .catch(next)
 }
 
-const patchUserAvatar = (req, res) => {
+const patchUserAvatar = (req, res, next) => {
   const { avatar } = req.body
   User.findByIdAndUpdate(
     req.user._id,

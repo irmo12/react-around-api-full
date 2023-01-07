@@ -49,6 +49,7 @@ app.post(
   createUser,
 )
 
+app.use('/', router)
 // app.use('*', (req, res) => {
 //   res.status(404).send({ message: 'Requested resource not found' })
 // })
