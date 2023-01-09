@@ -3,10 +3,10 @@ const { OK, CREATED } = require('../utils/utils')
 const badReq = require('../errors/bad-req-err')
 const NotFound = require('../errors/not-found-err')
 
-const getCards = (req, res) => {
+const getCards = (req, res, next) => {
   Card.find({})
-    .then((cards) => res.send({ data: cards }))
-    // .catch(next)
+    .then((cards) => {conole.log('1',cards);res.send({ data: cards })})
+    .catch(next)
 }
 
 const createCard = (req, res) => {

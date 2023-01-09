@@ -45,24 +45,20 @@ const userSchema = new mongoose.Schema({
   },
 })
 
-userSchema.statics.getUserByCredentials = function getUserByCredentials(
+userSchema.statics.getUserByCredentials = async function getUserByCredentials(
   email,
   password,
 ) {
-  return this.findOne({ email })
-    .select('+password')
-    .then((user) => {
-      if (!user) {
-        return Promise.reject(new badReq('Incorrect email or password'))
-      }
-      bcrypt.compare(password, user.password).then((matched) => {
-        if (!matched) {
-          return Promise.reject(new badReq('Incorrect email or password'))
-        }
-        return Promise.resolve(user)
-      })
-    })
-    .catch(next)
+  try {
+    let user = await this.findOne({ email }).select('+password')
+    const matched = await bcrypt.compare(password, user.password)
+    if (matched) {
+      return user
+    }
+    throw 0
+  } catch {
+    return 'Wrong email or password'
+  }
 }
 
 module.exports = mongoose.model('User', userSchema)

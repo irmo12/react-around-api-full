@@ -50,7 +50,7 @@ function App() {
       .then(() => {
         setIsLoggedIn(true)
         auth.checkToken(localStorage.getItem('token')).then((resData) => {
-          setUserAuth({ _id: resData.data._id, email: resData.data.email })
+          setUserAuth({ _id: resData._id, email: resData.email })
         })
         history.push('/main')
       })
@@ -120,7 +120,7 @@ function App() {
       auth
         .checkToken(localStorage.getItem('token'))
         .then((resData) => {
-          setUserAuth({ _id: resData.data._id, email: resData.data.email })
+          setUserAuth({ _id: resData._id, email: resData.email })
           setIsLoggedIn(true)
           history.push('/main')
         })
@@ -184,7 +184,7 @@ function App() {
 
   useEffect(() => {
     api
-      .getInitialCards()
+      .getInitialCards(localStorage.getItem('token'))
       .then((data) => setCards(data))
       .catch((err) => console.log(err))
   }, [])
@@ -232,8 +232,7 @@ function App() {
       history.push('/signin')
     }
     setIsTooltipOpen(false)
-    setTimeout(setIsSuccess,400,false)
-    
+    setTimeout(setIsSuccess, 400, false)
   }
 
   return (

@@ -1,18 +1,18 @@
-import {regApi} from './api';
+import {api} from './api';
 
 const auth = {
 
   signin: (data) => {
-    return regApi.authorizationParams(data)
+    return api.authorizationParams(data)
     .then((data) => {localStorage.setItem('token', data.token)})
     
 },
 
   signup: (data) => { 
-    return regApi.registerParams(data);
+    return api.registerParams(data);
 },
 
-  checkToken: (token) => { return regApi.getUserAuth(token) },
+  checkToken: (token) => { return api.getUserAuth(token) },
 
 };
 

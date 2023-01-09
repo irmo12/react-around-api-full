@@ -8,25 +8,25 @@ const Unauthorized = require('../errors/unauthorized-err')
 const NotFound = require('../errors/not-found-err')
 
 const getUser = (req, res, next) => {
-  const { id } = req.body
-  User.findById({ id })
+  const { _id } = req.user
+  User.findById({ _id })
     .orFail(new NotFound('no user by that id'))
-    .then((user) => res.send(({ name, about, avatar } = user)))
+    .then((user) => { res.send(({ name, about, avatar } = user)) })
     .catch(next)
 }
 
 const login = (req, res, next) => {
   const { email, password } = req.body
   User.getUserByCredentials(email, password)
-    .then((user) => {
-      if (!user) {
+    .then((userP) => {
+      if (typeof userP === "string") {
         return next(new Unauthorized('Unauthorized'))
       }
-      console.log(user)
-      const token = jwt.sign({ _id: user._id }, 'super-strong-secret', {
+      if (typeof userP === "object") {
+      const token = jwt.sign({ _id: userP._id }, 'super-strong-secret', {
         expiresIn: '7d',
       })
-      res.send({ token })
+      res.status(OK).send({ token })}
     })
     .catch(next)
 }
