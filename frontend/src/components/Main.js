@@ -1,6 +1,6 @@
-import React, { useContext } from "react";
-import { CurrentUserContext } from "../contexts/CurrentUserContext";
-import Card from "./Card";
+import React, { useContext } from 'react'
+import { CurrentUserContext } from '../contexts/CurrentUserContext'
+import Card from './Card'
 
 function Main(props) {
   const {
@@ -11,9 +11,9 @@ function Main(props) {
     cards,
     onLikeClick,
     onTrashClick,
-  } = props;
+  } = props
 
-  const currentUser = useContext(CurrentUserContext);
+  const currentUser = useContext(CurrentUserContext)
 
   return (
     <main className="main">
@@ -54,7 +54,6 @@ function Main(props) {
         />
       </section>
 
-
       <section className="gallery">
         {cards.map((card) => (
           <Card
@@ -67,7 +66,7 @@ function Main(props) {
         ))}
       </section>
     </main>
-  );
+  )
 }
 
-export default Main;
+export default Main

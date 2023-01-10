@@ -18,7 +18,7 @@ function EditProfilePopup({ isOpen, onClose, onUpdateUser, isLoading }) {
       profileName: currentUser.name,
       profileAbout: currentUser.about,
     })
-  }, [currentUser, isOpen, setValues])
+  }, [currentUser, setValues])
 
   function handleSubmit(e) {
     e.preventDefault()

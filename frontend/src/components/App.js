@@ -31,14 +31,10 @@ function App() {
 
   const [currentUser, setUser] = useState({
     _id: '',
+    email: '',
     name: '',
     about: '',
     avatar: '',
-  })
-
-  const [userAuth, setUserAuth] = useState({
-    _id: '',
-    email: '',
   })
 
   const [cards, setCards] = useState([])
@@ -50,7 +46,7 @@ function App() {
       .then(() => {
         setIsLoggedIn(true)
         auth.checkToken(localStorage.getItem('token')).then((resData) => {
-          setUserAuth({ _id: resData._id, email: resData.email })
+          setUser({ ...resData })
         })
         history.push('/main')
       })
@@ -64,7 +60,6 @@ function App() {
     auth
       .signup(email, password)
       .then((data) => {
-        console.log(data)
         setIsSuccess(true)
         setIsTooltipOpen(true)
       })
@@ -75,7 +70,7 @@ function App() {
   }
 
   function signOut() {
-    setUserAuth({
+    setUser({...currentUser,
       _id: '',
       email: '',
     })
@@ -120,7 +115,7 @@ function App() {
       auth
         .checkToken(localStorage.getItem('token'))
         .then((resData) => {
-          setUserAuth({ _id: resData._id, email: resData.email })
+          setUser({ ...resData })
           setIsLoggedIn(true)
           history.push('/main')
         })
@@ -151,21 +146,15 @@ function App() {
     return () => document.removeEventListener('keydown', closeByEscape)
   }, [popupOpen])
 
-  // useEffect(() => {
-  //   api
-  //     .getUserInfo()
-  //     .then((data) => {
-  //       setUser(data)
-  //     })
-  //     .catch((err) => console.log(err))
-  // }, [])
+
 
   function handleUpdateUser(newUser) {
     setIsLoading(true)
-    api
-      .patchUserInfo(newUser)
+
+      api
+      .patchUserInfo(newUser, localStorage.getItem('token'))
       .then((data) => {
-        setUser(data)
+        setUser({...currentUser, data})
         closeAllPopups()
       })
       .catch((err) => console.log(err))
@@ -242,7 +231,7 @@ function App() {
           <Header
             loggedIn={isLoggedIn}
             signOut={signOut}
-            email={userAuth.email}
+            email={currentUser.email}
           />
           <ProtectedRoute path="/main" loggedIn={isLoggedIn}>
             <Main

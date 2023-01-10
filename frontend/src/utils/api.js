@@ -8,21 +8,15 @@ class Api {
     return res.ok ? res.json() : Promise.reject(`Error: ${res.statusText}`)
   }
 
-  getUserInfo() {
-    return fetch(`${this._baseURL}/users/me`, { headers: this._headers }).then(
-      this._processResponse,
-    )
-  }
-
-  getInitialCards(token) {
+   getInitialCards(token) {
     return fetch(`${this._baseURL}/cards`, {
       headers: { ...this._headers, Authorization: `Bearer ${token}` },
     }).then((res) => this._processResponse(res))
   }
 
-  patchUserInfo(data) {
+  patchUserInfo(data,token) {
     return fetch(`${this._baseURL}/users/me`, {
-      headers: this._headers,
+      headers: { ...this._headers, Authorization: `Bearer ${token}` },
       method: 'PATCH',
       body: JSON.stringify(data),
     }).then((res) => this._processResponse(res))

@@ -11,7 +11,7 @@ const getUser = (req, res, next) => {
   const { _id } = req.user
   User.findById({ _id })
     .orFail(new NotFound('no user by that id'))
-    .then((user) => { res.send(({ name, about, avatar } = user)) })
+    .then((user) => { res.send(({ id, email, name, about, avatar } = user)) })
     .catch(next)
 }
 
@@ -65,7 +65,7 @@ const patchUser = (req, res, next) => {
     { new: true, runValidators: true },
   )
     .orFail()
-    .then((user) => res.status(OK).send({ data: user }))
+    .then((user) => res.status(OK).send({ user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         throw new BadReq('Validation error, check data')

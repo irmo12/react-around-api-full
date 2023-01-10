@@ -4,8 +4,8 @@ const badReq = require('../errors/bad-req-err')
 const NotFound = require('../errors/not-found-err')
 
 const getCards = (req, res, next) => {
-  Card.find({})
-    .then((cards) => {conole.log('1',cards);res.send({ data: cards })})
+  Card.find({}).orFail()
+    .then((cards) => {res.send(  cards )})
     .catch(next)
 }
 
