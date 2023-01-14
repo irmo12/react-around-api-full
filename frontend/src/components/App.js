@@ -1,10 +1,10 @@
 import Header from './Header'
 import Main from './Main'
 import Footer from './Footer'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { Redirect, Route, useHistory } from 'react-router-dom'
 import { api } from '../utils/api'
-import { CurrentUserContext } from '../contexts/CurrentUserContext'
+import UserContext, { UserProvider } from '../contexts/UserContext'
 import EditProfilePopup from './EditProfilePopup'
 import EditAvatarPopup from './EditAvatarPopup'
 import AddPlacePopup from './AddPlacePopup'
@@ -25,20 +25,12 @@ function App() {
   const [isDelCardWarnOpen, setDelCardWarnOpen] = useState(false)
   const [selectedCard, setSelectedCard] = useState({})
   const [isTooltipOpen, setIsTooltipOpen] = useState(false)
-
   const history = useHistory()
   const [isSuccess, setIsSuccess] = useState(false)
-
-  const [currentUser, setUser] = useState({
-    _id: '',
-    email: '',
-    name: '',
-    about: '',
-    avatar: '',
-  })
-
   const [cards, setCards] = useState([])
   const [isLoading, setIsLoading] = useState(false)
+ 
+  const {userData, updateUser} = useContext(UserContext)
 
   function login(data) {
     auth
@@ -46,7 +38,7 @@ function App() {
       .then(() => {
         setIsLoggedIn(true)
         auth.checkToken(localStorage.getItem('token')).then((resData) => {
-          setUser({ ...resData })
+          updateUser(resData)
         })
         history.push('/main')
       })
@@ -59,7 +51,7 @@ function App() {
   function register(email, password) {
     auth
       .signup(email, password)
-      .then((data) => {
+      .then(() => {
         setIsSuccess(true)
         setIsTooltipOpen(true)
       })
@@ -70,10 +62,7 @@ function App() {
   }
 
   function signOut() {
-    setUser({...currentUser,
-      _id: '',
-      email: '',
-    })
+    updateUser({ _id: '', email: '' })
     setIsLoggedIn(false)
     localStorage.removeItem('token')
   }
@@ -115,7 +104,7 @@ function App() {
       auth
         .checkToken(localStorage.getItem('token'))
         .then((resData) => {
-          setUser({ ...resData })
+          updateUser(resData)
           setIsLoggedIn(true)
           history.push('/main')
         })
@@ -124,7 +113,7 @@ function App() {
           setIsTooltipOpen(true)
         })
     }
-  }, [history])
+  }, [history,updateUser])
 
   const popupOpen =
     isAddPlaceOpen ||
@@ -146,15 +135,17 @@ function App() {
     return () => document.removeEventListener('keydown', closeByEscape)
   }, [popupOpen])
 
-
-
   function handleUpdateUser(newUser) {
     setIsLoading(true)
-
-      api
+    api
       .patchUserInfo(newUser, localStorage.getItem('token'))
       .then((data) => {
-        setUser({...currentUser, data})
+     updateUser(
+          {
+            name: data.name,
+            about: data.about,
+          },
+        )
         closeAllPopups()
       })
       .catch((err) => console.log(err))
@@ -165,7 +156,7 @@ function App() {
     api
       .changeAvatar(avatar)
       .then((data) => {
-        setUser({ ...currentUser, avatar: data.avatar })
+        updateUser({ avatar: data.avatar })
         closeAllPopups()
       })
       .catch((err) => console.log(err))
@@ -179,7 +170,7 @@ function App() {
   }, [])
 
   function handleCardLike(card) {
-    const isLiked = card.likes.some((user) => user._id === currentUser._id)
+    const isLiked = card.likes.some((user) => user._id === userData._id)
     api
       .changeLikeCardStatus(card._id, isLiked)
       .then((newCard) => {
@@ -227,11 +218,11 @@ function App() {
   return (
     <>
       <div className="page">
-        <CurrentUserContext.Provider value={currentUser}>
+        <UserProvider>
           <Header
             loggedIn={isLoggedIn}
             signOut={signOut}
-            email={currentUser.email}
+            email={userData.email}
           />
           <ProtectedRoute path="/main" loggedIn={isLoggedIn}>
             <Main
@@ -239,7 +230,6 @@ function App() {
               onAddPlaceClick={handleAddPlaceClick}
               onEditAvatarClick={handleEditAvatarClick}
               onCardClick={handleCardClick}
-              closeAllPopups={closeAllPopups}
               onTrashClick={handleTrashClick}
               onCardDelete={handleCardDelete}
               onLikeClick={handleCardLike}
@@ -275,7 +265,7 @@ function App() {
               isLoading={isLoading}
             />
           </ProtectedRoute>
-        </CurrentUserContext.Provider>
+        </UserProvider>
         <InfoTooltip
           isOpen={isTooltipOpen}
           onClose={closeTooltip}

@@ -1,11 +1,12 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import "./index.css";
-import App from "./components/App.js";
-import { BrowserRouter } from "react-router-dom";
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import './index.css'
+import App from './components/App.js'
+import { BrowserRouter } from 'react-router-dom'
+import { UserProvider } from './contexts/UserContext'
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
-<head>
+const root = ReactDOM.createRoot(document.getElementById('root'))
+;<head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Around The U.S.</title>
@@ -19,11 +20,13 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
   />
   <meta name="author" content="Omri Ben Tal at Practicum" />
   <link rel="favicon" href="./favicon.ico" />
-</head>;
+</head>
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-    <App />
+      <UserProvider>
+        <App />
+      </UserProvider>
     </BrowserRouter>
-  </React.StrictMode>
-);
+  </React.StrictMode>,
+)
