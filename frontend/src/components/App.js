@@ -113,7 +113,7 @@ function App() {
           setIsTooltipOpen(true)
         })
     }
-  })
+  },[])
 
   const popupOpen =
     isAddPlaceOpen ||
