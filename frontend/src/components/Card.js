@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import  CurrentUserContext  from "../contexts/UserContext";
+import  {UserContext}  from "../contexts/UserContext";
 
 function Card({ card, onCardClick, onLikeClick, onTrashClick }) {
   function handleImgClick() {
@@ -14,7 +14,7 @@ function Card({ card, onCardClick, onLikeClick, onTrashClick }) {
     onTrashClick(card);
   }
 
-  const currentUser = useContext(CurrentUserContext);
+  const currentUser = useContext(UserContext);
 
   const isOwn = card.owner._id === currentUser._id;
   const cardDeleteOptionClass = `card__trash ${

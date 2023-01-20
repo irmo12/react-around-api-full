@@ -65,7 +65,7 @@ const patchUser = (req, res, next) => {
     { new: true, runValidators: true },
   )
     .orFail()
-    .then((user) => res.status(OK).send({ user }))
+    .then((user) => res.status(OK).send( user ))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         throw new BadReq('Validation error, check data')
@@ -84,7 +84,7 @@ const patchUserAvatar = (req, res, next) => {
     { new: true, runValidators: true },
   )
     .orFail()
-    .then((user) => res.status(OK).send({ data: user }))
+    .then((user) => res.status(OK).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         throw new BadReq('bad link')

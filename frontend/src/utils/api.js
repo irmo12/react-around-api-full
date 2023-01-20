@@ -14,7 +14,7 @@ class Api {
     }).then((res) => this._processResponse(res))
   }
 
-  patchUserInfo(data,token) {
+  patchUserInfo(data, token) {
     return fetch(`${this._baseURL}/users/me`, {
       headers: { ...this._headers, Authorization: `Bearer ${token}` },
       method: 'PATCH',

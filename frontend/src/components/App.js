@@ -1,10 +1,10 @@
 import Header from './Header'
 import Main from './Main'
 import Footer from './Footer'
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Redirect, Route, useHistory } from 'react-router-dom'
 import { api } from '../utils/api'
-import UserContext, { UserProvider } from '../contexts/UserContext'
+import {UserContext} from '../contexts/UserContext'
 import EditProfilePopup from './EditProfilePopup'
 import EditAvatarPopup from './EditAvatarPopup'
 import AddPlacePopup from './AddPlacePopup'
@@ -29,8 +29,13 @@ function App() {
   const [isSuccess, setIsSuccess] = useState(false)
   const [cards, setCards] = useState([])
   const [isLoading, setIsLoading] = useState(false)
- 
-  const {userData, updateUser} = useContext(UserContext)
+  const [userData, setUserData] = useState({
+    _id: '',
+    email: '',
+    name: '',
+    about: '',
+    avatar: '',
+  })
 
   function login(data) {
     auth
@@ -38,7 +43,7 @@ function App() {
       .then(() => {
         setIsLoggedIn(true)
         auth.checkToken(localStorage.getItem('token')).then((resData) => {
-          updateUser(resData)
+          setUserData(resData)
         })
         history.push('/main')
       })
@@ -62,7 +67,7 @@ function App() {
   }
 
   function signOut() {
-    updateUser({ _id: '', email: '' })
+    setUserData({ _id: '', email: '' })
     setIsLoggedIn(false)
     localStorage.removeItem('token')
   }
@@ -104,7 +109,7 @@ function App() {
       auth
         .checkToken(localStorage.getItem('token'))
         .then((resData) => {
-          updateUser(resData)
+          setUserData(resData)
           setIsLoggedIn(true)
           history.push('/main')
         })
@@ -113,7 +118,7 @@ function App() {
           setIsTooltipOpen(true)
         })
     }
-  },[])
+  }, [])
 
   const popupOpen =
     isAddPlaceOpen ||
@@ -139,13 +144,11 @@ function App() {
     setIsLoading(true)
     api
       .patchUserInfo(newUser, localStorage.getItem('token'))
-      .then((data) => {
-     updateUser(
-          {
-            name: data.name,
-            about: data.about,
-          },
-        )
+      .then((user) => {
+        setUserData({...userData,
+          name: user.name,
+          about: user.about,
+        })
         closeAllPopups()
       })
       .catch((err) => console.log(err))
@@ -156,7 +159,7 @@ function App() {
     api
       .changeAvatar(avatar)
       .then((data) => {
-        updateUser({ avatar: data.avatar })
+        setUserData({...userData, avatar: data.avatar })
         closeAllPopups()
       })
       .catch((err) => console.log(err))
@@ -218,7 +221,7 @@ function App() {
   return (
     <>
       <div className="page">
-        <UserProvider>
+        <UserContext.Provider value={userData}>
           <Header
             loggedIn={isLoggedIn}
             signOut={signOut}
@@ -265,7 +268,7 @@ function App() {
               isLoading={isLoading}
             />
           </ProtectedRoute>
-        </UserProvider>
+        </UserContext.Provider>
         <InfoTooltip
           isOpen={isTooltipOpen}
           onClose={closeTooltip}

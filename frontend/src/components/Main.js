@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import UserContext from '../contexts/UserContext'
+import { UserContext } from '../contexts/UserContext'
 import Card from './Card'
 
 function Main(props) {
@@ -13,7 +13,7 @@ function Main(props) {
     onTrashClick,
   } = props
 
-  const { userData } = useContext(UserContext)
+  const userData = useContext(UserContext)
 
   return (
     <main className="main">
