@@ -4,7 +4,7 @@ import Footer from './Footer'
 import React, { useState, useEffect } from 'react'
 import { Redirect, Route, useHistory } from 'react-router-dom'
 import { api } from '../utils/api'
-import {UserContext} from '../contexts/UserContext'
+import { UserContext } from '../contexts/UserContext'
 import EditProfilePopup from './EditProfilePopup'
 import EditAvatarPopup from './EditAvatarPopup'
 import AddPlacePopup from './AddPlacePopup'
@@ -145,21 +145,18 @@ function App() {
     api
       .patchUserInfo(newUser, localStorage.getItem('token'))
       .then((user) => {
-        setUserData({...userData,
-          name: user.name,
-          about: user.about,
-        })
+        setUserData({ ...userData, name: user.name, about: user.about })
         closeAllPopups()
       })
       .catch((err) => console.log(err))
   }
 
-  function handleChangeProfilePicture({ avatar }) {
+  function handleChangeProfilePicture(avatar) {
     setIsLoading(true)
     api
-      .changeAvatar(avatar)
+      .changeAvatar(avatar, localStorage.getItem('token'))
       .then((data) => {
-        setUserData({...userData, avatar: data.avatar })
+        setUserData({ ...userData, avatar: data.avatar })
         closeAllPopups()
       })
       .catch((err) => console.log(err))
@@ -175,7 +172,7 @@ function App() {
   function handleCardLike(card) {
     const isLiked = card.likes.some((user) => user._id === userData._id)
     api
-      .changeLikeCardStatus(card._id, isLiked)
+      .changeLikeCardStatus(card._id, isLiked, localStorage.getItem('token'))
       .then((newCard) => {
         setCards((state) =>
           state.map((currentCard) =>
@@ -189,7 +186,7 @@ function App() {
   function handleCardDelete() {
     setIsLoading(true)
     api
-      .deleteCard(selectedCard._id)
+      .deleteCard(selectedCard._id, localStorage.getItem('token'))
       .then(() => {
         setCards((current) =>
           current.filter((card) => card._id !== selectedCard._id),
@@ -202,7 +199,7 @@ function App() {
   function handleAddPlaceSubmit(data) {
     setIsLoading(true)
     api
-      .postNewCard(data)
+      .postNewCard(data, localStorage.getItem('token'))
       .then((res) => {
         setCards([res, ...cards])
         closeAllPopups()

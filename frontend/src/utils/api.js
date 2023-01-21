@@ -22,38 +22,34 @@ class Api {
     }).then((res) => this._processResponse(res))
   }
 
-  postNewCard(data) {
+  postNewCard(data, token) {
     return fetch(`${this._baseURL}/cards`, {
-      headers: this._headers,
+      headers: { ...this._headers, Authorization: `Bearer ${token}` },
       method: 'POST',
       body: JSON.stringify(data),
     }).then((res) => this._processResponse(res))
   }
 
-  deleteCard(id) {
+  deleteCard(id, token) {
     return fetch(`${this._baseURL}/cards/${id}`, {
-      headers: this._headers,
+      headers: {...this._headers, Authorization: `Bearer ${token}` },
       method: 'DELETE',
     }).then((res) => this._processResponse(res))
   }
 
-  changeLikeCardStatus(id, isLiked) {
+  changeLikeCardStatus(id, isLiked, token) {
     return fetch(`${this._baseURL}/cards/likes/${id}`, {
-      headers: this._headers,
+      headers: { ...this._headers, Authorization: `Bearer ${token}` },
       method: isLiked ? 'DELETE' : 'PUT',
     }).then((res) => this._processResponse(res))
   }
 
-  changeAvatar(avatar) {
+  changeAvatar(avatar, token) {
     return fetch(`${this._baseURL}/users/me/avatar`, {
-      headers: this._headers,
+      headers: { ...this._headers, Authorization: `Bearer ${token}` },
       method: 'PATCH',
       body: JSON.stringify({ avatar }),
     }).then((res) => this._processResponse(res))
-  }
-
-  getInitialData() {
-    return Promise.all([api.getUserInfo(), api.getInitialCards()])
   }
 
   registerParams(data) {
