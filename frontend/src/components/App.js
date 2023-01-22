@@ -106,13 +106,15 @@ function App() {
 
   useEffect(() => {
     if (localStorage.getItem('token')) {
-      auth
-        .checkToken(localStorage.getItem('token'))
-        .then((resData) => {
-          setUserData(resData)
-          setIsLoggedIn(true)
-          history.push('/main')
-        })
+      auth.checkToken(localStorage.getItem('token')).then((resData) => {
+        setUserData(resData)
+        setIsLoggedIn(true)
+        history.push('/main')
+      })
+      api
+        .getInitialCards(localStorage.getItem('token'))
+        .then((data) => setCards(data))
+        .catch((err) => console.log(err))
         .catch((err) => {
           console.log(err.code, err.message)
           setIsTooltipOpen(true)
@@ -162,15 +164,8 @@ function App() {
       .catch((err) => console.log(err))
   }
 
-  useEffect(() => {
-    api
-      .getInitialCards(localStorage.getItem('token'))
-      .then((data) => setCards(data))
-      .catch((err) => console.log(err))
-  }, [])
-
   function handleCardLike(card) {
-    const isLiked = card.likes.some((user) => user._id === userData._id)
+    let isLiked = card.likes.some((id) => id === userData._id)
     api
       .changeLikeCardStatus(card._id, isLiked, localStorage.getItem('token'))
       .then((newCard) => {
