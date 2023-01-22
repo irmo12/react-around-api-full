@@ -16,7 +16,7 @@ function Card({ card, onCardClick, onLikeClick, onTrashClick }) {
 
   const currentUser = useContext(UserContext);
 
-  const isOwn = card.owner._id === currentUser._id;
+  const isOwn = card.owner === currentUser._id;
   const cardDeleteOptionClass = `card__trash ${
     isOwn ? "" : "trash_display-none"
   }`;

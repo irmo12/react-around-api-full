@@ -48,7 +48,7 @@ class Api {
     return fetch(`${this._baseURL}/users/me/avatar`, {
       headers: { ...this._headers, Authorization: `Bearer ${token}` },
       method: 'PATCH',
-      body: JSON.stringify({ avatar }),
+      body: JSON.stringify( avatar ),
     }).then((res) => this._processResponse(res))
   }
 
