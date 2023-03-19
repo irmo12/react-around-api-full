@@ -1,6 +1,8 @@
 const router = require('express').Router()
 const auth = require('../middleware/auth')
-const validIncoming = require('../middleware/validateIncoming')
+const validateUrl = require('../middleware/validateIncoming')
+const { celebrate, Joi } = require('celebrate')
+
 
 const {
   getUser,
@@ -11,6 +13,6 @@ const {
 
 router.get('/me', auth, getUser)
 router.patch('/me', auth, patchUser)
-router.patch('/me/avatar', auth,  patchUserAvatar)
+router.patch('/me/avatar', auth, celebrate({body: Joi.string().required().custom(validateUrl)}),  patchUserAvatar)
 
 module.exports = { usersRoute: router }
