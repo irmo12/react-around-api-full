@@ -1,5 +1,7 @@
 const mongoose = require('mongoose')
 const validator = require('validator')
+const bcrypt = require('bcryptjs')
+const badReq = require('../errors/bad-req-err')
 
 const userSchema = new mongoose.Schema({
   email: {
@@ -43,25 +45,20 @@ const userSchema = new mongoose.Schema({
   },
 })
 
-userSchema.statics.getUserByCredentials = function getUserByCredentials(
+userSchema.statics.getUserByCredentials = async function getUserByCredentials(
   email,
   password,
 ) {
-  return this.findOne({ email })
-    .select('+password')
-    .then((user) => {
-      if (!user) {
-        return Promise.reject(new Error('Incorrect email or password'))
-      }
-
-      return bcrypt.compare(password, user.password).then((matched) => {
-        if (!matched) {
-          return Promise.reject(new Error('Incorrect email or password'))
-        }
-
-        return user
-      })
-    })
+  try {
+    let user = await this.findOne({ email }).select('+password')
+    const matched = await bcrypt.compare(password, user.password)
+    if (matched) {
+      return user
+    }
+    throw 0
+  } catch {
+    return 'Wrong email or password'
+  }
 }
 
 module.exports = mongoose.model('User', userSchema)

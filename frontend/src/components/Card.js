@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { CurrentUserContext } from "../contexts/CurrentUserContext";
+import  {UserContext}  from "../contexts/UserContext";
 
 function Card({ card, onCardClick, onLikeClick, onTrashClick }) {
   function handleImgClick() {
@@ -14,15 +14,15 @@ function Card({ card, onCardClick, onLikeClick, onTrashClick }) {
     onTrashClick(card);
   }
 
-  const currentUser = useContext(CurrentUserContext);
+  const currentUser = useContext(UserContext);
 
-  const isOwn = card.owner._id === currentUser._id;
+  const isOwn = card.owner === currentUser._id;
   const cardDeleteOptionClass = `card__trash ${
     isOwn ? "" : "trash_display-none"
   }`;
 
-  const isLiked = card.likes.some((user) => user._id === currentUser._id);
-  const cardLikeButtonClass = `card__like-btn ${
+  let isLiked = card.likes.some((id) => id === currentUser._id);
+  let cardLikeButtonClass = `card__like-btn ${
     isLiked ? "card__like-btn_active" : ""
   }`;
 

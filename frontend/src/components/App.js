@@ -4,7 +4,7 @@ import Footer from './Footer'
 import React, { useState, useEffect } from 'react'
 import { Redirect, Route, useHistory } from 'react-router-dom'
 import { api } from '../utils/api'
-import { CurrentUserContext } from '../contexts/CurrentUserContext'
+import { UserContext } from '../contexts/UserContext'
 import EditProfilePopup from './EditProfilePopup'
 import EditAvatarPopup from './EditAvatarPopup'
 import AddPlacePopup from './AddPlacePopup'
@@ -25,24 +25,17 @@ function App() {
   const [isDelCardWarnOpen, setDelCardWarnOpen] = useState(false)
   const [selectedCard, setSelectedCard] = useState({})
   const [isTooltipOpen, setIsTooltipOpen] = useState(false)
-
   const history = useHistory()
   const [isSuccess, setIsSuccess] = useState(false)
-
-  const [currentUser, setUser] = useState({
+  const [cards, setCards] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [userData, setUserData] = useState({
     _id: '',
+    email: '',
     name: '',
     about: '',
     avatar: '',
   })
-
-  const [userAuth, setUserAuth] = useState({
-    _id: '',
-    email: '',
-  })
-
-  const [cards, setCards] = useState([])
-  const [isLoading, setIsLoading] = useState(false)
 
   function login(data) {
     auth
@@ -50,7 +43,7 @@ function App() {
       .then(() => {
         setIsLoggedIn(true)
         auth.checkToken(localStorage.getItem('token')).then((resData) => {
-          setUserAuth({ _id: resData.data._id, email: resData.data.email })
+          setUserData(resData)
         })
         history.push('/main')
       })
@@ -74,10 +67,7 @@ function App() {
   }
 
   function signOut() {
-    setUserAuth({
-      _id: '',
-      email: '',
-    })
+    setUserData({ _id: '', email: '' })
     setIsLoggedIn(false)
     localStorage.removeItem('token')
   }
@@ -116,19 +106,21 @@ function App() {
 
   useEffect(() => {
     if (localStorage.getItem('token')) {
-      auth
-        .checkToken(localStorage.getItem('token'))
-        .then((resData) => {
-          setUserAuth({ _id: resData.data._id, email: resData.data.email })
-          setIsLoggedIn(true)
-          history.push('/main')
-        })
+      auth.checkToken(localStorage.getItem('token')).then((resData) => {
+        setUserData(resData)
+        setIsLoggedIn(true)
+        history.push('/main')
+      })
+      api
+        .getInitialCards(localStorage.getItem('token'))
+        .then((data) => setCards(data))
+        .catch((err) => console.log(err))
         .catch((err) => {
           console.log(err.code, err.message)
           setIsTooltipOpen(true)
         })
     }
-  }, [history])
+  }, [])
 
   const popupOpen =
     isAddPlaceOpen ||
@@ -150,48 +142,32 @@ function App() {
     return () => document.removeEventListener('keydown', closeByEscape)
   }, [popupOpen])
 
-  useEffect(() => {
-    api
-      .getUserInfo()
-      .then((data) => {
-        setUser(data)
-      })
-      .catch((err) => console.log(err))
-  }, [])
-
   function handleUpdateUser(newUser) {
     setIsLoading(true)
     api
-      .patchUserInfo(newUser)
-      .then((data) => {
-        setUser(data)
+      .patchUserInfo(newUser, localStorage.getItem('token'))
+      .then((user) => {
+        setUserData({ ...userData, name: user.name, about: user.about })
         closeAllPopups()
       })
       .catch((err) => console.log(err))
   }
 
-  function handleChangeProfilePicture({ avatar }) {
+  function handleChangeProfilePicture(avatar) {
     setIsLoading(true)
     api
-      .changeAvatar(avatar)
+      .changeAvatar(avatar, localStorage.getItem('token'))
       .then((data) => {
-        setUser({ ...currentUser, avatar: data.avatar })
+        setUserData({ ...userData, avatar: data.avatar })
         closeAllPopups()
       })
       .catch((err) => console.log(err))
   }
 
-  useEffect(() => {
-    api
-      .getInitialCards()
-      .then((data) => setCards(data))
-      .catch((err) => console.log(err))
-  }, [])
-
   function handleCardLike(card) {
-    const isLiked = card.likes.some((user) => user._id === currentUser._id)
+    let isLiked = card.likes.some((id) => id === userData._id)
     api
-      .changeLikeCardStatus(card._id, isLiked)
+      .changeLikeCardStatus(card._id, isLiked, localStorage.getItem('token'))
       .then((newCard) => {
         setCards((state) =>
           state.map((currentCard) =>
@@ -205,7 +181,7 @@ function App() {
   function handleCardDelete() {
     setIsLoading(true)
     api
-      .deleteCard(selectedCard._id)
+      .deleteCard(selectedCard._id, localStorage.getItem('token'))
       .then(() => {
         setCards((current) =>
           current.filter((card) => card._id !== selectedCard._id),
@@ -218,7 +194,7 @@ function App() {
   function handleAddPlaceSubmit(data) {
     setIsLoading(true)
     api
-      .postNewCard(data)
+      .postNewCard(data, localStorage.getItem('token'))
       .then((res) => {
         setCards([res, ...cards])
         closeAllPopups()
@@ -231,17 +207,17 @@ function App() {
       history.push('/signin')
     }
     setIsTooltipOpen(false)
-    setIsSuccess(false)
+    setTimeout(setIsSuccess, 400, false)
   }
 
   return (
     <>
       <div className="page">
-        <CurrentUserContext.Provider value={currentUser}>
+        <UserContext.Provider value={userData}>
           <Header
             loggedIn={isLoggedIn}
             signOut={signOut}
-            email={userAuth.email}
+            email={userData.email}
           />
           <ProtectedRoute path="/main" loggedIn={isLoggedIn}>
             <Main
@@ -249,7 +225,6 @@ function App() {
               onAddPlaceClick={handleAddPlaceClick}
               onEditAvatarClick={handleEditAvatarClick}
               onCardClick={handleCardClick}
-              closeAllPopups={closeAllPopups}
               onTrashClick={handleTrashClick}
               onCardDelete={handleCardDelete}
               onLikeClick={handleCardLike}
@@ -285,7 +260,7 @@ function App() {
               isLoading={isLoading}
             />
           </ProtectedRoute>
-        </CurrentUserContext.Provider>
+        </UserContext.Provider>
         <InfoTooltip
           isOpen={isTooltipOpen}
           onClose={closeTooltip}

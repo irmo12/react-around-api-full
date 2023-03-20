@@ -1,16 +1,30 @@
-const router = require('express').Router();
-const { celebrate, Joi } = require('celebrate');
+const router = require('express').Router()
+const { celebrate, Joi } = require('celebrate')
+const auth = require('../middleware/auth')
+const validateURL = require('../middleware/validateURL')
+
 const {
-  getCards, createCard, likeCard, unlikeCard, deleteCard,
-} = require('../controllers/cards');
+  getCards,
+  createCard,
+  likeCard,
+  unlikeCard,
+  deleteCard,
+} = require('../controllers/cards')
 
-router.get('/', getCards);
-router.post('/', celebrate({
-  headers:  Joi.object().keys({'authorization': Joi.string(),
-  "Content-Type": Joi.string().valid("application/json")})
-}), createCard);
-router.put('/:id/likes', likeCard);
-router.delete('/:id/likes', unlikeCard);
-router.delete('/:id', deleteCard);
+router.get('/', auth, getCards)
+router.post(
+  '/',
+  auth,
+  celebrate({
+    body: Joi.object().keys({
+      name: Joi.string(),
+      link: Joi.string().required().custom(validateURL),
+    }).unknown(true),
+  }),
+  createCard,
+)
+router.put('/likes/:id', auth, likeCard)
+router.delete('/likes/:id', auth, unlikeCard)
+router.delete('/:id', auth, deleteCard)
 
-module.exports = { cardsRoute: router };
+module.exports = { cardsRoute: router }

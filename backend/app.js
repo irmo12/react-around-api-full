@@ -4,6 +4,7 @@ const bodyParser = require('body-parser')
 const rateLimit = require('express-rate-limit')
 const { urlencoded } = require('express')
 const { errors, celebrate, Joi } = require('celebrate')
+var cors = require('cors')
 
 const { login, createUser } = require('./controllers/users')
 const router = require('./routes')
@@ -24,6 +25,8 @@ const limiter = rateLimit({
 })
 
 app.use(limiter)
+app.use(cors())
+app.options('*', cors())
 app.use(bodyParser.json())
 app.use(urlencoded({ extended: true }))
 
@@ -33,9 +36,11 @@ app.post('/signin', login)
 app.post(
   '/signup',
   celebrate({
-    headers: Joi.object().keys({
-      'Content-Type': Joi.string().valid('application/json'),
-    }),
+    headers: Joi.object()
+      .keys({
+        'Content-Type': Joi.string().valid('application/json'),
+      })
+      .options({ allowUnknown: true }),
     body: Joi.object().keys({
       email: Joi.string().email(),
       password: Joi.string(),
@@ -44,17 +49,18 @@ app.post(
   createUser,
 )
 
+
 app.use('*', (req, res) => {
-  res.status(NOT_FOUND).send({ message: 'Requested resource not found' })
+  res.status(404).send({ message: 'Requested resource not found' })
 })
 
+app.use(errors())
 app.use((err, req, res, next) => {
-  const { statusCode = 500, message } = err
-  res.status(statusCode).send({
-    message: statusCode === 500 ? 'An error occurred on the server' : message,
+  err.statusCode ||= 500
+  res.status(err.statusCode).send({
+    message:
+      err.statusCode === 500 ? 'An error occurred on the server' : err.message,
   })
-
-  res.send(message)
 })
 
 app.listen(PORT, () => {

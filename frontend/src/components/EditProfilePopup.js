@@ -1,10 +1,10 @@
 import React, { useContext, useEffect } from 'react'
 import PopupWithForm from './PopupWithForm'
 import { useFormAndValidation } from '../hooks/useFormAndValidation'
-import { CurrentUserContext } from '../contexts/CurrentUserContext'
+import  {UserContext}  from '../contexts/UserContext'
 
 function EditProfilePopup({ isOpen, onClose, onUpdateUser, isLoading }) {
-  const currentUser = useContext(CurrentUserContext)
+  const currentUser = useContext(UserContext)
   const {
     values,
     handleChange,
@@ -18,7 +18,7 @@ function EditProfilePopup({ isOpen, onClose, onUpdateUser, isLoading }) {
       profileName: currentUser.name,
       profileAbout: currentUser.about,
     })
-  }, [currentUser, isOpen, setValues])
+  }, [currentUser, setValues])
 
   function handleSubmit(e) {
     e.preventDefault()

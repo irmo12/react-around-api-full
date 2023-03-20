@@ -1,6 +1,6 @@
-import React, { useContext } from "react";
-import { CurrentUserContext } from "../contexts/CurrentUserContext";
-import Card from "./Card";
+import React, { useContext } from 'react'
+import { UserContext } from '../contexts/UserContext'
+import Card from './Card'
 
 function Main(props) {
   const {
@@ -11,9 +11,9 @@ function Main(props) {
     cards,
     onLikeClick,
     onTrashClick,
-  } = props;
+  } = props
 
-  const currentUser = useContext(CurrentUserContext);
+  const userData = useContext(UserContext)
 
   return (
     <main className="main">
@@ -22,7 +22,7 @@ function Main(props) {
           <div className="profile__picture-wrapper">
             <img
               className="profile__picture"
-              src={`${currentUser.avatar}`}
+              src={userData.avatar}
               alt="user profile"
             />
             <div className="profile__picture-overlay">
@@ -36,14 +36,14 @@ function Main(props) {
             </div>
           </div>
           <div className="profile__details">
-            <h1 className="profile__user-name">{currentUser.name}</h1>
+            <h1 className="profile__user-name">{userData.name}</h1>
             <button
               className="profile__edit-button"
               type="button"
               aria-label="edit profile"
               onClick={onEditProfileClick}
             />
-            <p className="profile__user-about">{currentUser.about}</p>
+            <p className="profile__user-about">{userData.about}</p>
           </div>
         </div>
         <button
@@ -53,7 +53,6 @@ function Main(props) {
           onClick={onAddPlaceClick}
         />
       </section>
-
 
       <section className="gallery">
         {cards.map((card) => (
@@ -67,7 +66,7 @@ function Main(props) {
         ))}
       </section>
     </main>
-  );
+  )
 }
 
-export default Main;
+export default Main

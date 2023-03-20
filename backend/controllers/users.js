@@ -2,65 +2,70 @@ const User = require('../models/user')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
-const {
-  OK,
-  SERVER_INTERNAL,
-  BAD_REQ,
-  CREATED,
-  NOT_FOUND,
-} = require('../utils/utils')
+const { OK, CREATED } = require('../utils/utils')
 const BadReq = require('../errors/bad-req-err')
 const Unauthorized = require('../errors/unauthorized-err')
 const NotFound = require('../errors/not-found-err')
 
-const getUser = (req, res) => {
-  const { id } = req.body
-  User.findById({ id })
-    .then((user) =>
-      res.send({ name: user.name, about: user.about, avatar: user.avatar }),
-    )
+const getUser = (req, res, next) => {
+  const { _id } = req.user
+  User.findById({ _id })
+    .orFail(new NotFound('no user by that id'))
+    .then((user) => { res.send(({ id, email, name, about, avatar } = user)) })
     .catch(next)
 }
 
-const login = (req, res) => {
+const login = (req, res, next) => {
   const { email, password } = req.body
-  return User.getUserByCredentials(email, password)
-    .then((user) => {
-      if (!user) {
-        throw new Unauthorized('Unauthorized')
+  User.getUserByCredentials(email, password)
+    .then((userP) => {
+      if (typeof userP === "string") {
+        return next(new Unauthorized('Unauthorized'))
       }
-      const token = jwt.sign({ _id: user._id }, 'super-strong-secret', {
+      if (typeof userP === "object") {
+      const token = jwt.sign({ _id: userP._id }, 'super-strong-secret', {
         expiresIn: '7d',
       })
-      res.send({ token })
+      res.status(OK).send({ token })}
     })
     .catch(next)
 }
 
-const createUser = (req, res) => {
-  const { email, password, name, about, avatar } = req.body
+const createUser = (req, res, next) => {
+  let { email, password, name, about, avatar } = req.body
   bcrypt
     .hash(password, 10)
-    .then((hash) => {
-      User.create({ email, password: hash, name, about, avatar })
-    })
+    .catch(next)
+    .then((hash) => User.create({ email, password: hash, name, about, avatar }))
     .then((user) => {
-      if (!user) {
-        throw new BadReq('Invalid user information')
+      ;({ email, name, about, avatar } = user)
+      res.status(CREATED).send({ data: { email, name, about, avatar } })
+    })
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        return next(
+          new BadReq(
+            `${Object.values(err.errors)
+              .map((error) => error.message)
+              .join(', ')}`,
+          ),
+        )
       }
-      res.status(CREATED).send({ data: user })
+      if (err.code === 11000) {
+        throw new BadReq('A user with that email is already registered')
+      }
     })
     .catch(next)
 }
 
-const patchUser = (req, res) => {
+const patchUser = (req, res, next) => {
   User.findByIdAndUpdate(
     req.user._id,
     { name: req.body.name, about: req.body.about },
     { new: true, runValidators: true },
   )
     .orFail()
-    .then((user) => res.status(OK).send({ data: user }))
+    .then((user) => res.status(OK).send( user ))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         throw new BadReq('Validation error, check data')
@@ -71,7 +76,7 @@ const patchUser = (req, res) => {
     .catch(next)
 }
 
-const patchUserAvatar = (req, res) => {
+const patchUserAvatar = (req, res, next) => {
   const { avatar } = req.body
   User.findByIdAndUpdate(
     req.user._id,
@@ -79,7 +84,7 @@ const patchUserAvatar = (req, res) => {
     { new: true, runValidators: true },
   )
     .orFail()
-    .then((user) => res.status(OK).send({ data: user }))
+    .then((user) => res.status(OK).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         throw new BadReq('bad link')
