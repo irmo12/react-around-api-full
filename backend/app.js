@@ -4,8 +4,8 @@ const bodyParser = require('body-parser')
 const rateLimit = require('express-rate-limit')
 const { urlencoded } = require('express')
 const { errors, celebrate, Joi } = require('celebrate')
-var cors = require('cors')
-
+const cors = require('cors')
+const { requestLogger, errorLogger } = require('./middleware/logger');
 const { login, createUser } = require('./controllers/users')
 const router = require('./routes')
 
@@ -29,7 +29,7 @@ app.use(cors())
 app.options('*', cors())
 app.use(bodyParser.json())
 app.use(urlencoded({ extended: true }))
-
+app.use(requestLogger)
 app.use('/', router)
 app.post('/signin', login)
 
@@ -49,6 +49,7 @@ app.post(
   createUser,
 )
 
+app.use(errorLogger)
 
 app.use('*', (req, res) => {
   res.status(404).send({ message: 'Requested resource not found' })
