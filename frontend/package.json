@@ -14,7 +14,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "npm run build",
+    "build": "react-scripts build",
+    "predeploy": "npm run build",
     "deploy": "ssh btomri@omribt.students.nomoredomainssbs.ru 'mkdir -p /home/btomri/around-frontend/build' && scp -r ./build/* btomri@omribt.students.nomoredomainssbs.ru:/home/btomri/around-frontend/build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
