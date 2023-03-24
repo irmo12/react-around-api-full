@@ -16,7 +16,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "predeploy": "npm run build",
-    "deploy": "ssh btomri@omribt.chickenkiller.com 'mkdir -p /home/btomri/frontend/build' && scp -r ./build/* omribt.chickenkiller.com:/home/btomri/frontend/build",
+    "deploy": "ssh btomri@omribt.chickenkiller.com 'mkdir -p /home/btomri/react-around-api-full/frontend/' && scp -r ./build/* omribt.chickenkiller.com:/home/btomri/react-around-api-full/frontend/",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
