@@ -1,7 +1,7 @@
 const User = require('../models/user')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-
+const { NODE_ENV, JWT_SECRET } = process.env;
 const { OK, CREATED } = require('../utils/utils')
 const BadReq = require('../errors/bad-req-err')
 const Unauthorized = require('../errors/unauthorized-err')
@@ -23,7 +23,9 @@ const login = (req, res, next) => {
         return next(new Unauthorized('Unauthorized'))
       }
       if (typeof userP === "object") {
-      const token = jwt.sign({ _id: userP._id }, 'super-strong-secret', {
+      const token = jwt.sign(
+        { _id: userP._id },
+        NODE_ENV ==='production' ? JWT_SECRET: 'dev-secret' , {
         expiresIn: '7d',
       })
       res.status(OK).send({ token })}

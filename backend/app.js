@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express')
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
@@ -8,6 +9,7 @@ const cors = require('cors')
 const { requestLogger, errorLogger } = require('./middleware/logger');
 const { login, createUser } = require('./controllers/users')
 const router = require('./routes')
+
 
 mongoose.connect('mongodb://localhost:27017/aroundb', {
   useNewUrlParser: true,
