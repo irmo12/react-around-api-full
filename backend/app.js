@@ -33,6 +33,13 @@ app.use(bodyParser.json())
 app.use(urlencoded({ extended: true }))
 app.use(requestLogger)
 app.use('/', router)
+
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Server will crash now');
+  }, 0);
+});
+
 app.post('/signin', login)
 
 app.post(
