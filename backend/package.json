@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/irmo12/around-express.git"
+    "url": "git+https://github.com/irmo12/react-around-api-full.git"
   },
   "author": "Omri Ben Tal",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/irmo12/around-express/issues"
+    "url": "https://github.com/irmo12/react-around-api-full/issues"
   },
-  "homepage": "https://github.com/irmo12/around-express#readme",
+  "homepage": "https://github.com/irmo12/react-around-api-full#readme",
   "devDependencies": {
     "eslint": "^8.26.0",
     "eslint-config-airbnb-base": "^15.0.0",
