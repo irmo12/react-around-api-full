@@ -77,7 +77,7 @@ class Api {
 }
 
 const api = new Api({
-  baseURL: 'http://localhost:3000',
+  baseURL: 'api.omribt.chickenkiller.com',
   headers: {
     'Content-Type': 'application/json',
   },
