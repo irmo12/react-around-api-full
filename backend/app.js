@@ -10,7 +10,7 @@ const { requestLogger, errorLogger } = require('./middleware/logger');
 const { login, createUser } = require('./controllers/users')
 const router = require('./routes')
 
-
+console.log(process.env.NODE_ENV)
 mongoose.connect('mongodb://localhost:27017/aroundb', {
   useNewUrlParser: true,
 })
