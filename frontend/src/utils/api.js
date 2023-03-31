@@ -77,7 +77,7 @@ class Api {
 }
 
 const api = new Api({
-  baseURL: '',
+  baseURL: '.api.omri-around.crabdance.com',
   headers: {
     'Content-Type': 'application/json',
   },
