@@ -77,7 +77,7 @@ class Api {
 }
 
 const api = new Api({
-  baseURL: 'api.omribt.chickenkiller.com',
+  baseURL: 'api.',
   headers: {
     'Content-Type': 'application/json',
   },
