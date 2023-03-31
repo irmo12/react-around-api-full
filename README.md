@@ -3,6 +3,6 @@
 A fully fledged front/back end website. Hosted on a remote server.
 Implemented back end for functionality, traffic validation and security, users authentication, request and error logging.
 
-come visit at: www.omribt.chickenkiller.com
+visit at: www.omri-around.crabdance.com
 
 wow what a ride.
