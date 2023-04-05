@@ -60,7 +60,7 @@ app.post(
 
 app.use(errorLogger)
 
-app.use('*', (req, res) => {
+app.use('*', (req, res) => { 
   res.status(404).send({ message: 'Requested resource not found' })
 })
 
