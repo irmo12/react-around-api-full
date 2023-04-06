@@ -16,7 +16,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "predeploy": "npm run build",
-    "deploy": "ssh omriws@34.165.0.98 'mkdir -p /home/btomri/react-around-api-full/frontend-build' && scp -r ./build/* omriws@34.165.0.98:/home/btomri/react-around-api-full/frontend-build",
+    "deploy": "ssh omriws@34.165.0.98 'mkdir -p /home/btomri/react-around-api-full/frontend-build' && scp -r -i ~/.ssh/id_rsa ./build/* omriws@34.165.0.98:/home/btomri/react-around-api-full/frontend-build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
