@@ -14,7 +14,7 @@ const createCard = (req, res, next) => {
   const owner = req.user._id
   Card.create({ name, link, owner })
     .then((card) => {
-      if (!card) {
+      if (err.name === 'validationError') {
         throw new badReq('Invalid card information')
       }
       res.status(CREATED).send( card )
