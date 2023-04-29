@@ -19,7 +19,7 @@ router.post(
     body: Joi.object().keys({
       name: Joi.string(),
       link: Joi.string().required().custom(validateURL),
-    }).unknown(true),
+    }),
   }),
   createCard,
 )
