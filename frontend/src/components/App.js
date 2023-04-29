@@ -114,7 +114,6 @@ function App() {
       api
         .getInitialCards(localStorage.getItem('token'))
         .then((data) => setCards(data))
-        .catch((err) => console.log(err))
         .catch((err) => {
           console.log(err.code, err.message)
           setIsTooltipOpen(true)
