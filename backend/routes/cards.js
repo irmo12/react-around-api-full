@@ -17,14 +17,43 @@ router.post(
   auth,
   celebrate({
     body: Joi.object().keys({
-      name: Joi.string(),
+      name: Joi.string().min(2).max(30).required(),
       link: Joi.string().required().custom(validateURL),
     }),
   }),
   createCard,
 )
-router.put('/likes/:id', auth, likeCard)
-router.delete('/likes/:id', auth, unlikeCard)
-router.delete('/:id', auth, deleteCard)
+router.put(
+  '/likes/:id',
+  auth,
+  celebrate({
+    params: Joi.object().keys({
+      id: Joi.string().hex().length(24).required(),
+    }),
+  }),
+  likeCard,
+)
+
+router.delete(
+  '/likes/:id',
+  auth,
+  celebrate({
+    params: Joi.object().keys({
+      id: Joi.string().hex().length(24).required(),
+    }),
+  }),
+  unlikeCard,
+)
+
+router.delete(
+  '/:id',
+  auth,
+  celebrate({
+    params: Joi.object().keys({
+      id: Joi.string().hex().length(24).required(),
+    }),
+  }),
+  deleteCard,
+)
 
 module.exports = { cardsRoute: router }

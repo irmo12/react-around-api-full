@@ -2,10 +2,15 @@ const Card = require('../models/card')
 const { OK, CREATED } = require('../utils/utils')
 const badReq = require('../errors/bad-req-err')
 const NotFound = require('../errors/not-found-err')
+const unauthorized = require('../errors/unauthorized-err')
+const { Console } = require('winston/lib/winston/transports')
 
 const getCards = (req, res, next) => {
-  Card.find({}).orFail()
-    .then((cards) => {res.send(  cards )})
+  Card.find({})
+    .orFail()
+    .then((cards) => {
+      res.send(cards)
+    })
     .catch(next)
 }
 
@@ -13,13 +18,14 @@ const createCard = (req, res, next) => {
   const { name, link } = req.body
   const owner = req.user._id
   Card.create({ name, link, owner })
-    .then((card) => {
+    .then((card) => res.status(CREATED).send(card))
+    .catch((err) => {
       if (err.name === 'validationError') {
-        throw new badReq('Invalid card information')
+        next(new badReq('Invalid card information'))
+      } else {
+        next(err)
       }
-      res.status(CREATED).send( card )
     })
-    .catch(next)
 }
 
 const likeCard = (req, res, next) => {
@@ -29,15 +35,16 @@ const likeCard = (req, res, next) => {
     { new: true },
   )
     .orFail()
-    .then((card) => res.status(OK).send( card ))
+    .then((card) => res.status(OK).send(card))
     .catch((err) => {
       if (err.name === 'DocumentNotFoundError') {
-        throw new NotFound('no such card')
+        next(new NotFound('no such card'))
       } else if (err.name === 'CastError') {
-        throw new badReq('cast error, check body')
+        next(new badReq('cast error, check body'))
+      } else {
+        next(err)
       }
     })
-    .catch(next)
 }
 
 const unlikeCard = (req, res, next) => {
@@ -46,29 +53,34 @@ const unlikeCard = (req, res, next) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
-    .then((card) => res.status(OK).send( card ))
+    .then((card) => res.status(OK).send(card))
     .catch((err) => {
       if (err.name === 'DocumentNotFoundError') {
-        throw new NotFound('no such card')
+        next(new NotFound('no such card'))
       } else if (err.name === 'CastError') {
-        throw new badReq('cast error, check body')
+        next(new badReq('cast error, check body'))
+      } else {
+        next(err)
       }
     })
-    .catch(next)
 }
 
 const deleteCard = (req, res, next) => {
-  Card.findByIdAndRemove(req.params.id)
+  Card.findById(req.params.id)
     .orFail()
-    .then((card) => res.send( card ))
+    .then((card) => {
+      if (!card.owner.equals(req.user._id)) {
+        return next(new unauthorized('only the card owner may delete it'))
+      }
+      return card.deleteOne().then(() => res.send(card))
+    })
     .catch((err) => {
       if (err.name === 'DocumentNotFoundError') {
-        throw new NotFound('No card found with that id')
+        return next(new NotFound('No card found with that id'))
       } else if (err.name === 'CastError') {
-        throw new badReq('cast error, check body')
-      }
+        return next(new badReq('cast error, check body'))
+      } else next(err)
     })
-    .catch(next)
 }
 
 module.exports = {

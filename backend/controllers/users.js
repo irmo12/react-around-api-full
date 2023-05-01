@@ -1,17 +1,19 @@
 const User = require('../models/user')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const { NODE_ENV, JWT_SECRET } = process.env;
+const { NODE_ENV, JWT_SECRET } = process.env
 const { OK, CREATED } = require('../utils/utils')
 const BadReq = require('../errors/bad-req-err')
-const Unauthorized = require('../errors/unauthorized-err')
 const NotFound = require('../errors/not-found-err')
+const Conflict = require('../errors/conflict-err')
 
 const getUser = (req, res, next) => {
   const { _id } = req.user
   User.findById({ _id })
     .orFail(new NotFound('no user by that id'))
-    .then((user) => { res.send(({ id, email, name, about, avatar } = user)) })
+    .then((user) => {
+      res.send(({ id, email, name, about, avatar } = user))
+    })
     .catch(next)
 }
 
@@ -19,18 +21,22 @@ const login = (req, res, next) => {
   const { email, password } = req.body
   User.getUserByCredentials(email, password)
     .then((userP) => {
-      if (typeof userP === "string") {
-        return next(new Unauthorized('Unauthorized'))
-      }
-      if (typeof userP === "object") {
       const token = jwt.sign(
         { _id: userP._id },
-        NODE_ENV === 'production' ? JWT_SECRET : 'secret' , {
-        expiresIn: '7d',
-      })
-      res.status(OK).send({ token })}
+        NODE_ENV === 'production' ? JWT_SECRET : 'secret',
+        {
+          expiresIn: '7d',
+        },
+      )
+      res.status(OK).send({ token })
     })
-    .catch(next)
+    .catch((err) => {
+      if (err.name === 'DocumentNotFoundError') {
+        return next(new NotFound('user does not exist'))
+      } else {
+        return next(err)
+      }
+    })
 }
 
 const createUser = (req, res, next) => {
@@ -54,10 +60,13 @@ const createUser = (req, res, next) => {
         )
       }
       if (err.code === 11000) {
-        throw new BadReq('A user with that email is already registered')
+        return next(
+          new Conflict('A user with that email is already registered'),
+        )
+      } else {
+        next(err)
       }
     })
-    .catch(next)
 }
 
 const patchUser = (req, res, next) => {
@@ -67,15 +76,16 @@ const patchUser = (req, res, next) => {
     { new: true, runValidators: true },
   )
     .orFail()
-    .then((user) => res.status(OK).send( user ))
+    .then((user) => res.status(OK).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new BadReq('Validation error, check data')
+        next(new BadReq('Validation error, check data'))
       } else if (err.name === 'DocumentNotFoundError') {
-        throw new NotFound('no such user')
+        next(new NotFound('no such user'))
+      } else {
+        next(err)
       }
     })
-    .catch(next)
 }
 
 const patchUserAvatar = (req, res, next) => {
@@ -89,12 +99,13 @@ const patchUserAvatar = (req, res, next) => {
     .then((user) => res.status(OK).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new BadReq('bad link')
+        next(new BadReq('bad link'))
       } else if (err.name === 'DocumentNotFoundError') {
-        throw new NotFound('no such user')
+        next(new NotFound('no such user'))
+      } else {
+        next(err)
       }
     })
-    .catch(next)
 }
 
 module.exports = {
