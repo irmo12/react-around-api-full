@@ -1,11 +1,11 @@
-const router = require('express').Router()
-const auth = require('../middleware/auth')
-const { celebrate, Joi } = require('celebrate')
-const validateURL = require('../middleware/validateURL')
+const router = require('express').Router();
+const { celebrate, Joi } = require('celebrate');
+const auth = require('../middleware/auth');
+const validateURL = require('../middleware/validateURL');
 
-const { getUser, patchUser, patchUserAvatar } = require('../controllers/users')
+const { getUser, patchUser, patchUserAvatar } = require('../controllers/users');
 
-router.get('/me', auth, getUser)
+router.get('/me', auth, getUser);
 
 router.patch(
   '/me',
@@ -17,7 +17,7 @@ router.patch(
     }),
   }),
   patchUser,
-)
+);
 
 router.patch(
   '/me/avatar',
@@ -28,6 +28,6 @@ router.patch(
     }),
   }),
   patchUserAvatar,
-)
+);
 
-module.exports = { usersRoute: router }
+module.exports = { usersRoute: router };

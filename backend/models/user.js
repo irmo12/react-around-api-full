@@ -1,8 +1,7 @@
-const mongoose = require('mongoose')
-const validator = require('validator')
-const bcrypt = require('bcryptjs')
-const badReq = require('../errors/bad-req-err')
-const Unauthorized = require('../errors/unauthorized-err')
+const mongoose = require('mongoose');
+const validator = require('validator');
+const bcrypt = require('bcryptjs');
+const Unauthorized = require('../errors/unauthorized-err');
 
 const userSchema = new mongoose.Schema({
   email: {
@@ -11,7 +10,7 @@ const userSchema = new mongoose.Schema({
     unique: true,
     validate: {
       validator(mail) {
-        return validator.isEmail(mail)
+        return validator.isEmail(mail);
       },
       message: 'must be a valid email',
     },
@@ -38,26 +37,26 @@ const userSchema = new mongoose.Schema({
     default: 'https://pictures.s3.yandex.net/resources/avatar_1604080799.jpg',
     validate: {
       validator(link) {
-        return validator.isURL(link)
+        return validator.isURL(link);
       },
       message: 'must be a link',
     },
   },
-})
+});
 
 userSchema.statics.getUserByCredentials = async function getUserByCredentials(
   email,
   password,
 ) {
-  const user = await this.findOne({ email }).select('+password')
+  const user = await this.findOne({ email }).select('+password');
   if (!user) {
-    throw new Unauthorized('Wrong email or password')
+    throw new Unauthorized('Wrong email or password');
   }
-  const matched = await bcrypt.compare(password, user.password)
+  const matched = await bcrypt.compare(password, user.password);
   if (matched) {
-    return user
+    return user;
   }
-  throw new Unauthorized('Wrong email or password')
-}
+  throw new Unauthorized('Wrong email or password');
+};
 
-module.exports = mongoose.model('User', userSchema)
+module.exports = mongoose.model('User', userSchema);
