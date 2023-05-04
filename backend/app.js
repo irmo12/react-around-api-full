@@ -11,6 +11,7 @@ const { login, createUser } = require('./controllers/users');
 const router = require('./routes');
 const errorCentral = require('./middleware/errorCentral');
 const NotFound = require('./errors/not-found-err');
+const validateURL = require('./middleware/validateURL');
 
 mongoose.connect('mongodb://localhost:27017/aroundb', {
   useNewUrlParser: true,
@@ -50,16 +51,19 @@ app.post(
   '/signup',
   celebrate({
     body: Joi.object().keys({
-      email: Joi.string().email(),
-      password: Joi.string(),
+      email: Joi.string().email().required(),
+      password: Joi.string().required(),
+      name: Joi.string().min(2).max(30),
+      about: Joi.string().min(2).max(30),
+      avatar: Joi.string().custom(validateURL),
     }),
   }),
   createUser,
 );
 
-app.use(errorLogger);
+app.use('*', (req, res, next) => (new NotFound('Requested resource does not exist')));
 
-app.use('*', () => (new NotFound('Requested resource does not exist')));
+app.use(errorLogger);
 
 app.use(errors());
 

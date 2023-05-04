@@ -12,8 +12,8 @@ router.patch(
   auth,
   celebrate({
     body: Joi.object().keys({
-      name: Joi.string().min(2).max(40).required(),
-      about: Joi.string().min(2).max(200).required(),
+      name: Joi.string().min(2).max(30).required(),
+      about: Joi.string().min(2).max(30).required(),
     }),
   }),
   patchUser,

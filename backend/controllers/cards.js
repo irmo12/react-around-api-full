@@ -3,6 +3,7 @@ const { OK, CREATED } = require('../utils/utils');
 const BadReq = require('../errors/bad-req-err');
 const NotFound = require('../errors/not-found-err');
 const Unauthorized = require('../errors/unauthorized-err');
+const Forbidden = require('../errors/forbidden-err');
 
 const getCards = (req, res, next) => {
   Card.find({})
@@ -69,7 +70,7 @@ const deleteCard = (req, res, next) => {
     .orFail()
     .then((card) => {
       if (!card.owner.equals(req.user._id)) {
-        return next(new Unauthorized('only the card owner may delete it'));
+        return next(new Forbidden('only the card owner may delete it'));
       }
       return card.deleteOne().then(() => res.send(card));
     })

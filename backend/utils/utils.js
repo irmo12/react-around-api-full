@@ -16,5 +16,4 @@ module.exports = {
   UNAUTHORIZED,
   FORBIDDEN,
   CONFLICT,
-
 };
